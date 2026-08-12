@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { z } from "zod";
+import { cookies } from "next/headers";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
@@ -7,11 +7,8 @@ import { ApiError } from "@/lib/api/errors";
 import { signToken, verifyPassword } from "@/lib/api/auth";
 import { apiHandler, json } from "@/lib/api/response";
 import { parseJson } from "@/lib/api/validation";
-
-const loginSchema = z.object({
-  email: z.email("Invalid email address").trim().toLowerCase(),
-  password: z.string().min(1, "Password is required").max(200),
-});
+import { SESSION_COOKIE } from "@/lib/auth/constants";
+import { loginSchema } from "@/lib/schema/loginSchema";
 
 export const POST = apiHandler(async (request: Request) => {
   const input = await parseJson(request, loginSchema);
@@ -26,7 +23,17 @@ export const POST = apiHandler(async (request: Request) => {
     id: user.id,
     name: user.name,
     email: user.email,
+    phoneNumber: user.phoneNumber,
     role: user.role,
+    customerId: user.customerId,
   };
-  return json({ user: safeUser, token: await signToken(user) });
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, await signToken(user), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 8 * 60 * 60,
+    path: "/",
+  });
+  return json(safeUser);
 });

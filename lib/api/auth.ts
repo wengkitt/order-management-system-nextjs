@@ -7,6 +7,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { ApiError } from "@/lib/api/errors";
+import { SESSION_COOKIE } from "@/lib/auth/constants";
 
 export const roles = ["ADMIN", "STAFF", "CUSTOMER"] as const;
 export type UserRole = (typeof roles)[number];
@@ -47,21 +48,33 @@ export async function hashPassword(password: string): Promise<string> {
   return hash(password, 12);
 }
 
-function bearerToken(request: Request): string {
-  const authorization = request.headers.get("authorization");
-  if (!authorization?.startsWith("Bearer ")) {
-    throw new ApiError(401, "UNAUTHENTICATED", "Authentication required");
-  }
-  return authorization.slice(7).trim();
+function cookieToken(request: Request): string | undefined {
+  const cookie = request.headers.get("cookie");
+  if (!cookie) return undefined;
+
+  return cookie
+    .split(";")
+    .map((part) => part.trim().split("="))
+    .find(([name]) => name === SESSION_COOKIE)?.[1];
 }
 
-export async function authenticate(
-  request: Request,
+function requestToken(request: Request): string {
+  const authorization = request.headers.get("authorization");
+  if (authorization?.startsWith("Bearer ")) return authorization.slice(7).trim();
+
+  const token = cookieToken(request);
+  if (token) return decodeURIComponent(token);
+
+  throw new ApiError(401, "UNAUTHENTICATED", "Authentication required");
+}
+
+async function authenticateToken(
+  token: string,
   allowedRoles?: readonly UserRole[],
 ): Promise<AuthUser> {
   let subject: string | undefined;
   try {
-    const verified = await jwtVerify(bearerToken(request), secret(), { algorithms: ["HS256"] });
+    const verified = await jwtVerify(token, secret(), { algorithms: ["HS256"] });
     subject = verified.payload.sub;
   } catch (error) {
     if (error instanceof ApiError) throw error;
@@ -97,6 +110,27 @@ export async function authenticate(
     role: user.role,
     customerId: user.customerId,
   };
+}
+
+export async function authenticate(
+  request: Request,
+  allowedRoles?: readonly UserRole[],
+): Promise<AuthUser> {
+  return authenticateToken(requestToken(request), allowedRoles);
+}
+
+export async function getSessionUser(
+  token: string | undefined,
+  allowedRoles?: readonly UserRole[],
+): Promise<AuthUser | null> {
+  if (!token) return null;
+
+  try {
+    return await authenticateToken(token, allowedRoles);
+  } catch (error) {
+    if (error instanceof ApiError && (error.status === 401 || error.status === 403)) return null;
+    throw error;
+  }
 }
 
 export const ADMIN_ONLY = ["ADMIN"] as const;

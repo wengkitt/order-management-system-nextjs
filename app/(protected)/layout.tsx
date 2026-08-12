@@ -1,17 +1,15 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import LoginPage from "@/components/login-page";
 import { getSessionUser } from "@/lib/api/auth";
 import { SESSION_COOKIE } from "@/lib/auth/constants";
+import { AuthProvider } from "@/providers/auth-provider";
 
-export default async function HomePage() {
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   const user = await getSessionUser(token);
 
-  if (user) {
-    redirect(user.role === "CUSTOMER" ? "/orders" : "/dashboard");
-  }
+  if (!user) redirect("/");
 
-  return <LoginPage />;
+  return <AuthProvider initialUser={user}>{children}</AuthProvider>;
 }
