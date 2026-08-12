@@ -1,5 +1,5 @@
-import { AuthenticatedLanding } from "@/components/authenticated-landing";
+import { OrdersView } from "@/components/management/orders-view";
 
 export default function OrdersPage() {
-  return <AuthenticatedLanding title="My orders" />;
+  return <OrdersView />;
 }

@@ -1,5 +1,5 @@
-import { AuthenticatedLanding } from "@/components/authenticated-landing";
+import { CustomersView } from "@/components/management/customers-view";
 
 export default function CustomersPage() {
-  return <AuthenticatedLanding title="Customers" />;
+  return <CustomersView />;
 }

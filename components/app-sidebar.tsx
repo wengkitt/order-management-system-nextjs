@@ -5,7 +5,6 @@ import {
   LayoutDashboardIcon,
   LogOutIcon,
   PackageIcon,
-  PackageCheckIcon,
   ShieldCheckIcon,
   ShoppingBagIcon,
   UsersIcon,
@@ -84,14 +83,14 @@ export function AppSidebar({ user }: { user: AuthUser }) {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              tooltip="Peach Supplement"
+              tooltip="Orderly"
               render={<Link href={user.role === "CUSTOMER" ? "/orders" : "/dashboard"} />}
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <PackageCheckIcon />
+                <span className="text-xs font-semibold">OM</span>
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">Peach Supplement</span>
+                <span className="truncate font-medium">Orderly</span>
                 <span className="truncate text-xs text-muted-foreground">Order management</span>
               </div>
             </SidebarMenuButton>

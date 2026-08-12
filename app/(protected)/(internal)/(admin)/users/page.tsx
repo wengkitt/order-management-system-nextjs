@@ -1,5 +1,5 @@
-import { AuthenticatedLanding } from "@/components/authenticated-landing";
+import { UsersView } from "@/components/management/users-view";
 
 export default function UsersPage() {
-  return <AuthenticatedLanding title="Users" />;
+  return <UsersView />;
 }

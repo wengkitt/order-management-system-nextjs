@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { BellIcon, SearchIcon } from "lucide-react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getSessionUser } from "@/lib/api/auth";
 import { SESSION_COOKIE } from "@/lib/auth/constants";
@@ -14,7 +15,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   if (!user) redirect("/");
 
-  function toTitleCase(str: String) {
+  function toTitleCase(str: string) {
     return str
       .toLowerCase()
       .split(" ")
@@ -28,9 +29,16 @@ export default async function ProtectedLayout({ children }: { children: React.Re
         <SidebarProvider>
           <AppSidebar user={user} />
           <SidebarInset>
-            <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-              <SidebarTrigger />
-              <p className="text-sm text-muted-foreground">{toTitleCase(user.role)} Workspace</p>
+            <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b px-4 sm:px-6">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger />
+                <p className="text-sm text-muted-foreground">{toTitleCase(user.role)} workspace</p>
+              </div>
+              <div className="flex items-center gap-4 text-muted-foreground">
+                <SearchIcon className="size-4" />
+                <BellIcon className="size-4" />
+                <span className="hidden text-sm sm:inline">12 Aug 2026</span>
+              </div>
             </header>
             <div className="flex flex-1 flex-col">{children}</div>
           </SidebarInset>

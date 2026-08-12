@@ -1,5 +1,5 @@
-import { AuthenticatedLanding } from "@/components/authenticated-landing";
+import { ProductsView } from "@/components/management/products-view";
 
 export default function ProductsPage() {
-  return <AuthenticatedLanding title="Products" />;
+  return <ProductsView />;
 }

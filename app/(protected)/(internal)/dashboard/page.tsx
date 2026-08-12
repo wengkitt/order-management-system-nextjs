@@ -1,5 +1,5 @@
-import { AuthenticatedLanding } from "@/components/authenticated-landing";
+import { DashboardView } from "@/components/management/dashboard-view";
 
 export default function DashboardPage() {
-  return <AuthenticatedLanding title="Dashboard" />;
+  return <DashboardView />;
 }
