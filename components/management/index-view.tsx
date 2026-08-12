@@ -62,10 +62,17 @@ export function IndexView({ type }: { type: ManagementIndexType }) {
         description={config.description}
         action={
           canAdd ? (
-            <Button render={type === "orders" ? <Link href="/orders/new" /> : undefined}>
-              <PlusIcon data-icon="inline-start" />
-              {config.button}
-            </Button>
+            type === "orders" ? (
+              <Button nativeButton={false} render={<Link href="/orders/new" />}>
+                <PlusIcon data-icon="inline-start" />
+                {config.button}
+              </Button>
+            ) : (
+              <Button>
+                <PlusIcon data-icon="inline-start" />
+                {config.button}
+              </Button>
+            )
           ) : undefined
         }
       />

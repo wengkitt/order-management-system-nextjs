@@ -23,7 +23,7 @@ export function DashboardView() {
         title={`Good morning, ${user.name.split(" ")[0]}`}
         description="Here’s what needs your attention today."
         action={
-          <Button render={<Link href="/orders/new" />}>
+          <Button nativeButton={false} render={<Link href="/orders/new" />}>
             <PlusIcon data-icon="inline-start" />
             Create order
           </Button>
@@ -79,7 +79,7 @@ export function DashboardView() {
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="font-medium">Recent orders</h2>
-          <Button variant="outline" render={<Link href="/orders" />}>
+          <Button nativeButton={false} variant="outline" render={<Link href="/orders" />}>
             View all
           </Button>
         </div>
