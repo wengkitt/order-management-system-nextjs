@@ -1,4 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is an order management system built with Next.js App Router. PostgreSQL
+access is configured with Drizzle ORM and Neon's serverless driver.
+
+## Database setup
+
+1. Copy `.env.example` to `.env.local`.
+2. Set `DATABASE_URL` to the pooled connection string from your Neon project.
+3. Add table definitions under `db/schema/` and export them from
+   `db/schema/index.ts`.
+4. Generate and apply migrations:
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+```
+
+Useful database commands:
+
+```bash
+pnpm db:generate # generate SQL migrations from schema changes
+pnpm db:migrate  # apply generated migrations
+pnpm db:push     # push schema changes directly (development only)
+pnpm db:studio   # open Drizzle Studio
+```
+
+Import the typed, server-only client with `import { db } from "@/db"` in
+Server Components, Server Actions, Route Handlers, or other server-only data
+access modules.
 
 ## Getting Started
 
