@@ -5,9 +5,10 @@ access is configured with Drizzle ORM and Neon's serverless driver.
 
 1. Copy `.env.example` to `.env.local`.
 2. Set `DATABASE_URL` to the pooled connection string from your Neon project.
-3. Add table definitions under `db/schema/` and export them from
+3. Set `AUTH_SECRET` to a random value of at least 32 characters.
+4. Add table definitions under `db/schema/` and export them from
    `db/schema/index.ts`.
-4. Generate and apply migrations:
+5. Generate and apply migrations:
 
 ```bash
 pnpm db:generate
@@ -21,7 +22,17 @@ pnpm db:generate # generate SQL migrations from schema changes
 pnpm db:migrate  # apply generated migrations
 pnpm db:push     # push schema changes directly (development only)
 pnpm db:studio   # open Drizzle Studio
+pnpm db:seed     # create the development admin account
 ```
+
+## REST API
+
+API routes live under `app/api`. Except for `POST /api/auth/login`, send the JWT
+returned by login in the `Authorization: Bearer <token>` header. Errors use a
+consistent `{ "error": { "code": "...", "message": "..." } }` shape.
+
+The development seed creates `admin@example.com` with password `password` when
+that account does not already exist. Change the password outside local development.
 
 Import the typed, server-only client with `import { db } from "@/db"` in
 Server Components, Server Actions, Route Handlers, or other server-only data
