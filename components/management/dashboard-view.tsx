@@ -4,6 +4,7 @@ import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/providers/auth-provider";
 import { orderRows } from "./data";
 import { DataTable, ManagementPage, Note, PageHeading, StatCard } from "./shared";
@@ -36,12 +37,12 @@ export function DashboardView() {
         <StatCard label="Products" value="32" detail="4 need restocking" />
       </div>
       <div className="grid gap-3 lg:grid-cols-[1.5fr_1fr]">
-        <section className="rounded-xl border bg-card p-4">
-          <div className="mb-4 flex justify-between">
-            <h2 className="font-medium">Order pipeline</h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Order pipeline</CardTitle>
             <span className="text-sm text-muted-foreground">125 total</span>
-          </div>
-          <div className="flex flex-col gap-3">
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
             {pipeline.map(([label, count, width]) => (
               <div
                 className="grid grid-cols-[5rem_1fr_2rem] items-center gap-3 text-sm"
@@ -57,24 +58,28 @@ export function DashboardView() {
                 <b>{count}</b>
               </div>
             ))}
-          </div>
-        </section>
-        <section className="rounded-xl border bg-card p-4">
-          <h2 className="mb-4 font-medium">Priority queue</h2>
-          <dl className="flex flex-col gap-3 text-sm">
-            {[
-              ["Pending over 24h", "5 orders"],
-              ["Low stock", "4 products"],
-              ["Ready to ship", "8 orders"],
-            ].map(([label, value]) => (
-              <div className="flex justify-between" key={label}>
-                <dt className="text-muted-foreground">{label}</dt>
-                <dd className="font-medium">{value}</dd>
-              </div>
-            ))}
-          </dl>
-          <Note>Revenue includes delivered orders only.</Note>
-        </section>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Priority queue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <dl className="flex flex-col gap-3 text-sm">
+              {[
+                ["Pending over 24h", "5 orders"],
+                ["Low stock", "4 products"],
+                ["Ready to ship", "8 orders"],
+              ].map(([label, value]) => (
+                <div className="flex justify-between" key={label}>
+                  <dt className="text-muted-foreground">{label}</dt>
+                  <dd className="font-medium">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <Note>Revenue includes delivered orders only.</Note>
+          </CardContent>
+        </Card>
       </div>
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">

@@ -2,8 +2,26 @@ import { SearchIcon, SlidersHorizontalIcon } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function ManagementPage({ children }: { children: React.ReactNode }) {
   return <main className="flex flex-1 flex-col gap-5 p-4 sm:p-6">{children}</main>;
@@ -30,24 +48,17 @@ export function PageHeading({
 }
 
 export function StatusBadge({ children }: { children: string }) {
-  const tone =
-    children === "Delivered" || children === "Active"
-      ? "text-emerald-700"
-      : children === "Cancelled" || children === "Inactive" || children === "Out of stock"
-        ? "text-destructive"
-        : children === "Processing"
-          ? "text-blue-700"
-          : "text-amber-700";
+  const variant =
+    children === "Cancelled" || children === "Inactive" || children === "Out of stock"
+      ? "destructive"
+      : children === "Delivered" || children === "Active"
+        ? "secondary"
+        : "outline";
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-1 text-xs font-medium",
-        tone,
-      )}
-    >
+    <Badge variant={variant}>
       <span className="size-1.5 rounded-full bg-current" />
       {children}
-    </span>
+    </Badge>
   );
 }
 
@@ -73,22 +84,22 @@ export function DataTable({
   ]);
   return (
     <>
-      <div className="overflow-x-auto rounded-xl border bg-card">
-        <table className="w-full min-w-2xl text-sm">
-          <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
-            <tr>
+      <Card className="py-0">
+        <Table className="min-w-2xl">
+          <TableHeader className="bg-muted/50 text-xs text-muted-foreground">
+            <TableRow>
               {headers.map((header) => (
-                <th className="px-4 py-3 font-medium last:text-right" key={header}>
+                <TableHead className="px-4 last:text-right" key={header}>
                   {header}
-                </th>
+                </TableHead>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {rows.map((row, rowIndex) => (
-              <tr className="border-t transition-colors hover:bg-muted/30" key={row.join("-")}>
+              <TableRow key={row.join("-")}>
                 {row.map((cell, index) => (
-                  <td className="px-4 py-3 last:text-right" key={`${cell}-${index}`}>
+                  <TableCell className="px-4 py-3 last:text-right" key={`${cell}-${index}`}>
                     {index === 0 && href ? (
                       <Link
                         className="font-medium hover:underline"
@@ -101,13 +112,13 @@ export function DataTable({
                     ) : (
                       cell
                     )}
-                  </td>
+                  </TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+        </Table>
+      </Card>
       <div className="flex flex-col items-center justify-between gap-3 text-xs text-muted-foreground sm:flex-row">
         <span>Showing 1–{rows.length} of 24</span>
         <div className="flex gap-2">
@@ -134,15 +145,29 @@ export function Filters({ noun }: { noun: string }) {
         <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input className="pl-9" placeholder={`Search ${noun}…`} />
       </div>
-      <select className="h-9 rounded-lg border bg-background px-3 text-sm">
-        <option>All statuses</option>
-        <option>Active</option>
-        <option>Inactive</option>
-      </select>
-      <select className="h-9 rounded-lg border bg-background px-3 text-sm">
-        <option>Newest first</option>
-        <option>Oldest first</option>
-      </select>
+      <Select defaultValue="all">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <Select defaultValue="newest">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="newest">Newest first</SelectItem>
+            <SelectItem value="oldest">Oldest first</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
       <Button variant="outline">
         <SlidersHorizontalIcon data-icon="inline-start" />
         More filters
@@ -161,17 +186,23 @@ export function StatCard({
   detail: string;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl border bg-card p-4">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <strong className="text-2xl font-medium">{value}</strong>
-      <small className="text-muted-foreground">{detail}</small>
-    </div>
+    <Card size="sm">
+      <CardHeader>
+        <CardTitle className="text-muted-foreground">{label}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-1">
+        <strong className="text-2xl font-medium">{value}</strong>
+        <small className="text-muted-foreground">{detail}</small>
+      </CardContent>
+    </Card>
   );
 }
 
 export function Note({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-3 border-l-3 bg-muted p-3 text-xs text-muted-foreground">{children}</div>
+    <Alert className="mt-3">
+      <AlertDescription>{children}</AlertDescription>
+    </Alert>
   );
 }
 
@@ -190,9 +221,11 @@ export function DetailList({ items }: { items: [string, React.ReactNode][] }) {
 
 export function ManagementCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border bg-card p-4">
-      <h2 className="mb-4 font-medium">{title}</h2>
-      {children}
-    </section>
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
   );
 }
